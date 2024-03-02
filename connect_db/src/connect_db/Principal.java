@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 import connect_db.conn.ConnectionDatabase;
 
 /**
- * @author Julian Velasquez
+ * @author Motor_APP
  */
 public class Principal {
 

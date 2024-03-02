@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import connect_db.util.Credentials;
 
 /**
- * @author Julian Velasquez
+ * @author MotorAPP
  */
 public class ConnectionDatabase {
 

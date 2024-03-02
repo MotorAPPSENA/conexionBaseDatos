@@ -1,7 +1,7 @@
 package connect_db.util;
 
 /**
- * @author Julian Velasquez
+ * @author Motor-APP
  */
 public enum Credentials {
 
