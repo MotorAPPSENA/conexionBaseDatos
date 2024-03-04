@@ -5,7 +5,7 @@ package connect_db.util;
  */
 public enum Credentials {
 
-  USERNAME("root"), PASSWORD("1706"), HOST("localhost"), PORT("3306"), DATABASE("db_motor_app");
+  USERNAME("root"), PASSWORD("1706"), HOST("localhost"), PORT("3306"), DATABASE("pruebaCRUD");
 
   private String value;
 

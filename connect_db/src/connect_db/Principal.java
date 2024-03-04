@@ -1,7 +1,7 @@
 package connect_db;
 
 import java.util.logging.Logger;
-import connect_db.conn.ConnectionDatabase;
+import connect_db.conn.Conexion;
 
 /**
  * @author Motor_APP
@@ -12,9 +12,9 @@ public class Principal {
 
   public static void main(String[] args) {
 
-    log.info(".:: Start the test connection ::.");
+    log.info(" Inicia el test de conexion ");
     
-    ConnectionDatabase conn = new ConnectionDatabase();
+    Conexion conn = new Conexion();
     
     conn.getConnection();
   }
