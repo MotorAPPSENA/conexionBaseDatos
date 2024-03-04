@@ -18,7 +18,10 @@ import javax.swing.table.DefaultTableModel;
 import dao.DaoUsuario;
 import modelo.Usuario;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class vUsuario extends JFrame {
 
@@ -33,6 +36,10 @@ public class vUsuario extends JFrame {
 	private JTextField txtContraseña;
 	private JTextField txtUsuario;
 	private JLabel lblid;
+	DefaultTableModel modelo = new DefaultTableModel();
+	ArrayList<Usuario> lista;
+	int fila = -1;
+	Usuario usuario = new Usuario();
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -45,6 +52,31 @@ public class vUsuario extends JFrame {
 				}
 			}
 		});
+	}
+
+	public void actualizarTabla() {
+
+		while (modelo.getRowCount() > 0) {
+			modelo.removeRow(0);
+		}
+		lista = dao.consultaUsuarios();
+		for (Usuario u : lista) {
+			Object user[] = new Object[4];
+			user[0] = u.getId();
+			user[1] = u.getUsuario();
+			user[2] = u.getConstraseña();
+			user[3] = u.getNombre();
+			modelo.addRow(user);
+		}
+		tblUsuarios.setModel(modelo);
+
+	}
+
+	public void limpiar() {
+		lblid.setText("");
+		txtUsuario.setText("");
+		txtContraseña.setText("");
+		txtNombre.setText("");
 	}
 
 	public vUsuario() {
@@ -108,7 +140,8 @@ public class vUsuario extends JFrame {
 		btnAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(txtUsuario.getText().equals("")||txtContraseña.getText().equals("")||txtNombre.getText().equals("")) {
+					if (txtUsuario.getText().equals("") || txtContraseña.getText().equals("")
+							|| txtNombre.getText().equals("")) {
 						JOptionPane.showMessageDialog(null, "CAMPOS VACIOS");
 						return;
 					}
@@ -117,6 +150,8 @@ public class vUsuario extends JFrame {
 					user.setConstraseña(txtContraseña.getText());
 					user.setNombre(txtNombre.getText());
 					if (dao.insertarUsuaruio(user)) {
+						actualizarTabla();
+						limpiar();
 						JOptionPane.showMessageDialog(null, "SE AGREGO CORRECTAMENTE");
 					} else {
 						JOptionPane.showMessageDialog(null, "ERROR");
@@ -128,25 +163,88 @@ public class vUsuario extends JFrame {
 		});
 		btnAgregar.setBounds(169, 256, 92, 23);
 		contentPane.add(btnAgregar);
-		
+
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int opcion = JOptionPane.showConfirmDialog(null,"¿Estás seguro de eliminar este Usuario?",
+							"ELIMINAR USUARIO",JOptionPane.YES_NO_OPTION);
+						if(opcion == 0) {
+							if (dao.eliminarUsuario(usuario.getId())&&usuario.getId()>0) {
+						actualizarTabla();
+						limpiar();
+						JOptionPane.showMessageDialog(null, "SE ELIMINO CORRECTAMENTE!!");
+						}else {
+							JOptionPane.showMessageDialog(null, "ERROR");
+						}
+							} 
+						}catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "ERROR");
+				}
+			}
+		});
 		btnEliminar.setBounds(169, 291, 92, 23);
 		contentPane.add(btnEliminar);
 
 		btnActualizar = new JButton("Actualizar");
+		btnActualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+							if (txtUsuario.getText().equals("") || txtContraseña.getText().equals("")
+								|| txtNombre.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "CAMPOS VACIOS");
+					return;
+				}
+				usuario.setUsuario(txtUsuario.getText());
+				usuario.setConstraseña(txtContraseña.getText());
+				usuario.setNombre(txtNombre.getText());
+				if (dao.editarUsuaruio(usuario)) {
+					actualizarTabla();
+					limpiar();
+					JOptionPane.showMessageDialog(null, "SE ACTUALIZO CORRECTAMENTE");
+				} else {
+					JOptionPane.showMessageDialog(null, "ERROR");
+						}
+					}catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, "ERROR");
+				}
+			}
+		});
 		btnActualizar.setBounds(169, 325, 92, 23);
 		contentPane.add(btnActualizar);
 
 		btnLimpiar = new JButton("Limpiar");
+		btnLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				limpiar();
+			}
+		});
 		btnLimpiar.setBounds(169, 356, 92, 23);
 		contentPane.add(btnLimpiar);
 
 		tblUsuarios = new JTable();
+		tblUsuarios.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				fila = tblUsuarios.getSelectedRow();
+				usuario = lista.get(fila);
+				lblid.setText("" + usuario.getId());
+				txtUsuario.setText(usuario.getUsuario());
+				txtContraseña.setText(usuario.getConstraseña());
+				txtNombre.setText(usuario.getNombre());
+			}
+		});
 		tblUsuarios.setModel(new DefaultTableModel(
 				new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null },
 						{ null, null, null, null }, { null, null, null, null }, { null, null, null, null }, },
 				new String[] { "New column", "New column", "New column", "New column" }));
 		tblUsuarios.setBounds(383, 34, 352, 373);
 		contentPane.add(tblUsuarios);
+		modelo.addColumn("ID");
+		modelo.addColumn("USUARIO");
+		modelo.addColumn("CONTRASEÑA");
+		modelo.addColumn("NOMBRE");
+		actualizarTabla();
 	}
-}
+	}
